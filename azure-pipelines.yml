@@ -1,0 +1,62 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-2019'
+
+variables:
+  buildConfiguration: 'Debug'
+
+steps:
+
+    - task: UseDotNet@2 
+      displayName: ".NET Core 3.1.x"
+      inputs:
+        version: '3.1.x'
+        packageType: runtime
+
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command: restore
+        projects: '**/*.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        projects: '**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        projects: '**/*[Tt]ests/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+      enabled: false
+
+    - task: DotNetCoreCLI@2
+      displayName: Publish
+      inputs:
+        command: publish
+        publishWebProjects: True
+        arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+        zipAfterPublish: false
+
+    - task: CopyFiles@2
+      displayName: 'Copy Terraform Files to Artifacts'
+      inputs:
+        SourceFolder: Terraform
+        TargetFolder: '$(build.artifactstagingdirectory)/Terraform'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+        ArtifactName: 'sample-build'
+      condition: succeededOrFailed()
