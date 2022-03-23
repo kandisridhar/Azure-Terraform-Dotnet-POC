@@ -27,10 +27,10 @@ CD Pipeline :
 	    Environment Creation Stage : (Agent Pool – Hosted Agent) 
 			i. Create Storage accont and container to store Terraform State file (Azure CLI)
 			ii. Get Storage account key by using Powershell commands.
-			$key=(Get-AzureRmStorageAccountKey -ResourceGroupName 
-			$(terraformstoragerg) -AccountName $(terraformstorageaccount)).Value[0]
-			Write-Host "Power shell Output"
-			Write-Host "##vso[task.setvariable variable=storagekey;]$key"
+				$key=(Get-AzureRmStorageAccountKey -ResourceGroupName 
+				$(terraformstoragerg) -AccountName $(terraformstorageaccount)).Value[0]
+				Write-Host "Power shell Output"
+				Write-Host "##vso[task.setvariable variable=storagekey;]$key"
 			 
 			iii. Replace Tokens to replace variable values .
 			iv. Terraform Installer
@@ -42,9 +42,3 @@ CD Pipeline :
 	   
 	   Application Deployment into VM stage : (Agent Pool – Self-Hosted Agent)
 		       i. Copy files Task 
-		
-		
-
-
-
-
